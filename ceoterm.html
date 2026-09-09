@@ -3423,6 +3423,7 @@ const DATA = {
 const won = n => n==null ? "—" : Math.round(n).toLocaleString("ko-KR")+"원";
 const pct = n => n==null ? "—" : n.toFixed(1)+"%";
 const state = { amount:"1억원", review:"일반심사", sub:"40세", sort:"보험료", year:10, show:[] };
+function keepScroll(fn){ var y=window.pageYOffset||0; fn(); var r=function(){window.scrollTo(0,y);}; r(); if(window.requestAnimationFrame) requestAnimationFrame(r); }
 function el(tag,a={},...k){const e=document.createElement(tag);for(const[x,v]of Object.entries(a)){if(x==="class")e.className=v;else if(x.startsWith("on"))e.addEventListener(x.slice(2),v);else if(v!=null)e.setAttribute(x,v);}for(const c of k)if(c!=null)e.append(c.nodeType?c:document.createTextNode(c));return e;}
 function seg(label,opts,cur,cb){const s=el("div",{class:"seg"},el("span",{class:"lab"},label));const o=el("div",{class:"opts"});opts.forEach(v=>{const b=el("button",{"aria-pressed":String(v===cur)},String(v));b.addEventListener("click",()=>cb(v));o.append(b);});s.append(o);return s;}
 function subOpts(){ return state.amount==="1억원" ? ["40세","50세","60세","70세"] : ["남","여"]; }
@@ -3476,12 +3477,12 @@ function renderFilter(){
   const box=document.getElementById("s3filter"); box.innerHTML="";
   const cos=setCompanies();
   const all=el("button",{class:"fchip all","aria-pressed":String(state.show.length===0)}, `전체 (${cos.length})`);
-  all.addEventListener("click",()=>{ state.show=[]; refresh(); });
+  all.addEventListener("click",()=>{ state.show=[]; keepScroll(refresh); });
   box.append(all);
   cos.forEach(c=>{
     const on=state.show.includes(c);
     const b=el("button",{class:"fchip","aria-pressed":String(on),title:c}, c.length>22?c.slice(0,22)+"…":c);
-    b.addEventListener("click",()=>{ state.show = on ? state.show.filter(x=>x!==c) : state.show.concat([c]); refresh(); });
+    b.addEventListener("click",()=>{ state.show = on ? state.show.filter(x=>x!==c) : state.show.concat([c]); keepScroll(refresh); });
     box.append(b);
   });
 }

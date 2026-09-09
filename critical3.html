@@ -11287,6 +11287,7 @@ function el(tag,a={},...k){const e=document.createElement(tag);for(const[x,v]of 
 function seg(label,opts,cur,cb){const s=el("div",{class:"seg"},el("span",{class:"lab"},label));const o=el("div",{class:"opts"});opts.forEach(v=>{const b=el("button",{"aria-pressed":String(v===cur)},String(v));b.addEventListener("click",()=>cb(v));o.append(b);});s.append(o);return s;}
 function curSet(){ return DATA.sets[`${state.bo}|${state.rev}`]; }
 function selDambo(){ return DAMBO.map(d=>d.k).filter(k=>state.dambo.has(k)); }
+function keepScroll(fn){ var y=window.pageYOffset||0; fn(); var r=function(){window.scrollTo(0,y);}; r(); if(window.requestAnimationFrame) requestAnimationFrame(r); }
 function sumOf(d){
   const ks=selDambo(); if(!ks.length) return null;
   let s=0; for(const k of ks){ if(d[k]==null) return null; s+=d[k]; }
@@ -11311,7 +11312,7 @@ function renderDambo(){
     const cb=el("input",{type:"checkbox"}); cb.checked=on;
     cb.addEventListener("change",()=>{ cb.checked?state.dambo.add(d.k):state.dambo.delete(d.k);
       if(state.sort!=="합산" && !state.dambo.has(state.sort)) state.sort="합산";
-      refresh(); });
+      keepScroll(refresh); });
     lab.append(cb, el("span",{}, (d.label||d.k)), el("span",{class:"amt"}, d.amt));
     wrap.append(lab);
   });
@@ -11323,7 +11324,7 @@ function renderSort(){
   const opts=[{k:"합산",l:"선택 담보 합산"}].concat(selDambo().map(k=>({k, l:(DAMBO.find(d=>d.k===k).label||k)})));
   opts.forEach(o=>{
     const b=el("button",{class:"sortbtn","aria-pressed":String(state.sort===o.k)},el("b",{},o.l),el("span",{},"저렴한 순"));
-    b.addEventListener("click",()=>{state.sort=o.k;refresh();}); st.append(b);
+    b.addEventListener("click",()=>{state.sort=o.k;keepScroll(refresh);}); st.append(b);
   });
   box.append(st);
   const ks=selDambo();
@@ -11354,12 +11355,12 @@ function renderFilter(){
   const box=document.getElementById("s3filter"); box.innerHTML="";
   const cos=setCompanies();
   const all=el("button",{class:"fchip all","aria-pressed":String(state.show.length===0)}, `전체 (${cos.length})`);
-  all.addEventListener("click",()=>{ state.show=[]; refresh(); });
+  all.addEventListener("click",()=>{ state.show=[]; keepScroll(refresh); });
   box.append(all);
   cos.forEach(c=>{
     const on=state.show.includes(c);
     const b=el("button",{class:"fchip","aria-pressed":String(on),title:c}, c.length>22?c.slice(0,22)+"…":c);
-    b.addEventListener("click",()=>{ state.show = on ? state.show.filter(x=>x!==c) : state.show.concat([c]); refresh(); });
+    b.addEventListener("click",()=>{ state.show = on ? state.show.filter(x=>x!==c) : state.show.concat([c]); keepScroll(refresh); });
     box.append(b);
   });
 }

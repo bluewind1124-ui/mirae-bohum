@@ -3315,6 +3315,7 @@ const pct = n => n==null ? "—" : n.toFixed(1)+"%";
 const man = n => n==null ? "—" : Math.round(n).toLocaleString("ko-KR")+"만원";
 
 const state = { amount:"3천만원", pay:"5년납", review:"일반심사", sort:"보험료", year:10, show:[] };
+function keepScroll(fn){ var y=window.pageYOffset||0; fn(); var r=function(){window.scrollTo(0,y);}; r(); if(window.requestAnimationFrame) requestAnimationFrame(r); }
 
 function el(tag, attrs={}, ...kids){
   const e=document.createElement(tag);
@@ -3421,12 +3422,12 @@ function renderFilter(){
   const box=document.getElementById("s3filter"); box.innerHTML="";
   const cos=setCompanies();
   const all=el("button",{class:"fchip all","aria-pressed":String(state.show.length===0)}, `전체 (${cos.length})`);
-  all.addEventListener("click",()=>{ state.show=[]; refresh(); });
+  all.addEventListener("click",()=>{ state.show=[]; keepScroll(refresh); });
   box.append(all);
   cos.forEach(c=>{
     const on=state.show.includes(c);
     const b=el("button",{class:"fchip","aria-pressed":String(on),title:c}, c.length>22?c.slice(0,22)+"…":c);
-    b.addEventListener("click",()=>{ state.show = on ? state.show.filter(x=>x!==c) : state.show.concat([c]); refresh(); });
+    b.addEventListener("click",()=>{ state.show = on ? state.show.filter(x=>x!==c) : state.show.concat([c]); keepScroll(refresh); });
     box.append(b);
   });
 }

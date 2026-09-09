@@ -90,6 +90,7 @@ header.app p{margin:6px 0 0;color:var(--muted);font-size:12.5px}
 .cov-toolbar .count{font-size:12px;color:var(--muted)}
 .linkbtn{border:0;background:transparent;color:var(--accent);font-size:12px;font-weight:700;padding:4px 2px}
 .cov-list{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden auto;background:var(--surface);max-height:720px}
+@media (max-width:640px){.cov-list{max-height:none;overflow:visible}}
 .cov{border-bottom:1px solid var(--line)}
 .cov:last-child{border-bottom:0}
 .cov-main{display:grid;grid-template-columns:26px 1fr auto;gap:10px;align-items:center;padding:10px 13px}
@@ -25627,6 +25628,19 @@ const wonMan = n => n==null ? "—" : money(n);
 
 const state = { catId:null, sub:{}, sel:new Set(), selectedOnly:false, show:[] };
 
+/* 담보/필터 토글 시 스크롤 위치 유지 (모바일에서 맨 위로 튀는 것 방지) */
+function keepScroll(fn){
+  var y = window.pageYOffset || document.documentElement.scrollTop || 0;
+  var cl = document.querySelector('.cov-list'); var cy = cl ? cl.scrollTop : 0;
+  fn();
+  var restore = function(){
+    window.scrollTo(0, y);
+    var c2 = document.querySelector('.cov-list'); if(c2) c2.scrollTop = cy;
+  };
+  restore();
+  if(window.requestAnimationFrame) requestAnimationFrame(restore);
+}
+
 /* ===== Step 4 (전체폭 비교) 공통 ===== */
 function hideS4(){ const s4=document.getElementById("s4"); if(s4){ s4.hidden=true; document.getElementById("s4body").innerHTML=""; document.getElementById("s4filter").innerHTML=""; } }
 function filtCos(allCos){
@@ -25641,12 +25655,12 @@ function s4open(title, hint, allCos, nodes){
   if(allCos && allCos.length){
     const active=(state.show||[]).filter(c=>allCos.includes(c));
     const all=el("button",{class:"fchip all","aria-pressed":String(active.length===0)}, `전체 (${allCos.length})`);
-    all.addEventListener("click",()=>{ state.show=[]; refresh(); });
+    all.addEventListener("click",()=>{ state.show=[]; keepScroll(refresh); });
     fb.append(all);
     allCos.forEach(c=>{
       const on=active.includes(c);
       const b=el("button",{class:"fchip","aria-pressed":String(on),title:c}, c.length>22?c.slice(0,22)+"…":c);
-      b.addEventListener("click",()=>{ state.show = on ? state.show.filter(x=>x!==c) : (state.show||[]).concat([c]); refresh(); });
+      b.addEventListener("click",()=>{ state.show = on ? state.show.filter(x=>x!==c) : (state.show||[]).concat([c]); keepScroll(refresh); });
       fb.append(b);
     });
   }
@@ -25880,7 +25894,7 @@ function renderStep3(tgt){
     el("button",{class:"linkbtn",onclick:()=>{state.sel.clear();afterSel();}},"전체 해제"),
     el("label",{style:"font-size:12px;color:var(--muted);display:flex;align-items:center;gap:5px;margin-left:auto"},
       (()=>{const cb=el("input",{type:"checkbox"});cb.checked=state.selectedOnly;
-        cb.addEventListener("change",()=>{state.selectedOnly=cb.checked;refresh();});return cb;})(),
+        cb.addEventListener("change",()=>{state.selectedOnly=cb.checked;keepScroll(refresh);});return cb;})(),
       "선택 담보만 보기"),
     el("span",{class:"count",id:"selcount"},"")
   );
@@ -25937,7 +25951,7 @@ function renderStep3(tgt){
   const n=state.sel.size, sc=document.getElementById("selcount");
   sc.textContent = n? `선택 ${n}개 / 전체 ${g.covers.length}개` : `담보를 선택하세요 (전체 ${g.covers.length}개)`;
 }
-function afterSel(){ refresh(); }
+function afterSel(){ keepScroll(refresh); }
 
 function infoTable(ig, cos){
   cos = cos || ig.companies;
