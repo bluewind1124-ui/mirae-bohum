@@ -37,6 +37,10 @@ button{font-family:inherit;cursor:pointer}
 #gate .kicker{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
 #gate h1{font-size:19px;margin-bottom:6px}
 #gate p{color:var(--muted);font-size:12.5px;margin:0 0 20px}
+#gate .menu{text-align:left;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;
+  padding:12px 14px;margin:0 0 18px}
+#gate .menu ol{margin:0;padding-left:20px;color:var(--ink);font-size:12px;line-height:1.9}
+#gate .menu li::marker{color:var(--accent);font-weight:700}
 #gate input{width:100%;padding:12px 14px;border:1px solid var(--line-strong);border-radius:10px;
   background:var(--surface-2);color:var(--ink);font-size:15px;text-align:center;letter-spacing:.15em;font-family:inherit}
 #gate input:focus{outline:2px solid var(--accent);outline-offset:1px}
@@ -73,8 +77,18 @@ header.h p{color:var(--muted);font-size:13px;margin:8px 0 0}
 <div id="gate">
   <div class="card" id="gateCard">
     <div class="kicker">미래전략금융서비스</div>
-    <h1>보험상품 비교 도구</h1>
+    <h1>전략채널본부</h1>
     <p>접속 코드를 입력하세요.</p>
+    <div class="menu">
+      <ol>
+        <li>생명보험 가이드북 비교</li>
+        <li>생명·손해보험 담보별 비교견적</li>
+        <li>단기납 종신보험 비교</li>
+        <li>3대질병진단비 비교</li>
+        <li>경영인 정기보험 비교</li>
+        <li>미래전략 상생시상 조회</li>
+      </ol>
+    </div>
     <input id="pw" type="password" inputmode="numeric" autocomplete="off" placeholder="접속 코드" aria-label="접속 코드">
     <button id="enter">들어가기</button>
     <div class="err" id="err"></div>
